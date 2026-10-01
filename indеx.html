@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MANSYLE — Мужская одежда и обувь</title>
+
+    <!-- ✅ Telegram Mini App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
         body { background: #f4f4f7; color: #16161d; line-height: 1.6; }
@@ -599,23 +603,15 @@
         /* ===== ПЛАВАЮЩАЯ КНОПКА МЕНЕДЖЕРА ===== */
         .manager-float {
             position: fixed;
-            bottom: 30px;
-            left: 30px;
-            background: #0088cc;
-            color: white;
-            padding: 0.9rem 1.4rem;
-            border-radius: 50px;
-            font-weight: 700;
-            font-size: 0.9rem;
+            bottom: 30px; left: 30px;
+            background: #0088cc; color: white;
+            padding: 0.9rem 1.4rem; border-radius: 50px;
+            font-weight: 700; font-size: 0.9rem;
             text-decoration: none;
             box-shadow: 0 8px 24px rgba(0,136,204,0.45);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            z-index: 400;
-            transition: 0.25s;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            display: flex; align-items: center; gap: 10px;
+            z-index: 400; transition: 0.25s;
+            text-transform: uppercase; letter-spacing: 0.5px;
             animation: floatPulse 2.5s infinite;
         }
         .manager-float:hover {
@@ -623,10 +619,7 @@
             transform: translateY(-3px) scale(1.04);
             animation: none;
         }
-        .manager-float .telegram-icon {
-            width: 22px; height: 22px;
-            flex-shrink: 0;
-        }
+        .manager-float .telegram-icon { width: 22px; height: 22px; flex-shrink: 0; }
         @keyframes floatPulse {
             0%, 100% { box-shadow: 0 8px 24px rgba(0,136,204,0.45); }
             50% { box-shadow: 0 8px 32px rgba(0,136,204,0.75); }
@@ -690,17 +683,12 @@
             .cart-qty-btn { width: 28px; height: 32px; font-size: 1rem; }
             .cart-qty { height: 32px; }
             .cart-qty-value { min-width: 26px; font-size: 0.85rem; }
-
             .step-circle { width: 28px; height: 28px; font-size: 0.75rem; }
             .step-label { font-size: 0.62rem; max-width: 60px; }
             .progress-line-bg { top: 26px; }
-
-            /* Менеджер - снизу по центру, компактнее */
             .manager-float {
-                bottom: 16px;
-                left: 16px;
-                padding: 0.7rem 1.1rem;
-                font-size: 0.75rem;
+                bottom: 16px; left: 16px;
+                padding: 0.7rem 1.1rem; font-size: 0.75rem;
                 border-radius: 40px;
             }
             .manager-float .telegram-icon { width: 18px; height: 18px; }
@@ -747,7 +735,6 @@
         <p>© 2026 MANSTYLE — Мужская одежда и обувь. Доставка по всей России.</p>
     </footer>
 
-    <!-- Плавающая кнопка менеджера -->
     <a href="https://t.me/GMAS_RULET" target="_blank" class="manager-float" title="Написать менеджеру">
         <svg class="telegram-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="white">
             <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18.717-.962 3.389-1.362 4.958-.168.659-.449.879-.741.901-.632.05-1.111-.417-1.723-.818-.957-.628-1.497-1.019-2.425-1.63-.99-.653-.348-1.011.216-1.597.148-.153 2.708-2.483 2.757-2.694.006-.026.012-.123-.045-.174-.058-.052-.144-.034-.207-.02-.09.02-1.517.964-4.28 2.83-.405.278-.771.414-1.099.407-.362-.008-1.058-.205-1.575-.374-.634-.207-1.139-.317-1.098-.669.021-.183.273-.371.756-.562 2.956-1.288 4.927-2.138 5.912-2.551 2.815-1.171 3.399-1.374 3.78-1.38.084-.001.271.019.393.117.102.082.13.193.144.271.014.078.031.256.018.394z"/>
@@ -774,11 +761,17 @@
 
     <script>
         /* ==========================================
-           📲 TELEGRAM НАСТРОЙКИ
+           📲 TELEGRAM MINI APP
            ========================================== */
-        const BOT_TOKEN = "8281250104:AAG1JgQRoEpXMmrPSZQUq6MQRo1OsDJdqFU";
-        const CHAT_ID   = "1254310866";
-        const MANAGER_USERNAME = "GMAS_RULET"; // менеджер
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.ready();
+            tg.expand();
+            tg.setHeaderColor('#111118');
+            tg.setBackgroundColor('#f4f4f7');
+        }
+
+        const MANAGER_USERNAME = "GMAS_RULET";
 
         /* ========== ТОВАРЫ ========== */
         const products = [
@@ -1399,7 +1392,7 @@
                 </label>
             `).join('');
 
-            const prefillName = currentUser ? currentUser.name : '';
+            const prefillName = currentUser ? currentUser.name : (tg?.initDataUnsafe?.user?.first_name || '');
             const prefillPhone = currentUser ? currentUser.phone || '' : '';
 
             modalContent.innerHTML = `
@@ -1469,8 +1462,10 @@
         function closeModal() { modalOverlay.classList.remove('show'); }
         modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
 
-        /* ========== ОТПРАВКА ЗАКАЗА В TELEGRAM ========== */
-        async function submitOrder(e) {
+        /* ==========================================
+           📲 ОТПРАВКА ЗАКАЗА ЧЕРЕЗ MINI APP
+           ========================================== */
+        function submitOrder(e) {
             e.preventDefault();
             const form = e.target;
             const submitBtn = document.getElementById('submitBtn');
@@ -1490,8 +1485,6 @@
                 return `• ${p.name}${sizeStr} — ${item.qty} шт. × ${formatPrice(p.price)} = ${formatPrice(p.price * item.qty)}`;
             }).join('\n');
 
-            const escapeHtml = (str) => String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
-
             const orderId = 100000 + Math.floor(Math.random() * 900000);
 
             // Сохраняем заказ в личный кабинет
@@ -1509,50 +1502,41 @@
                 saveOrders();
             }
 
-            const message = `
-🔥 <b>НОВЫЙ ЗАКАЗ #${orderId}</b>
+            // Формируем данные для отправки
+            const orderData = {
+                orderId: orderId,
+                name: name,
+                phone: phone,
+                address: address,
+                delivery: delivery,
+                comment: comment,
+                items: itemsList,
+                total: formatPrice(getCartTotal()),
+                user: currentUser ? currentUser.email : 'Гость',
+                date: new Date().toLocaleString('ru-RU')
+            };
 
-👤 <b>Имя:</b> ${escapeHtml(name)}
-📞 <b>Телефон:</b> ${escapeHtml(phone)}
-📍 <b>Адрес:</b> ${escapeHtml(address)}
-🚚 <b>Доставка:</b> ${escapeHtml(delivery)}
-💬 <b>Комментарий:</b> ${escapeHtml(comment)}
-${currentUser ? `🔐 <b>Аккаунт:</b> ${escapeHtml(currentUser.email)}` : ''}
+            // Если открыто в Telegram Mini App — отправляем боту
+            if (tg) {
+                try {
+                    tg.sendData(JSON.stringify(orderData));
 
-<b>🛍 Товары:</b>
-${escapeHtml(itemsList)}
-
-💰 <b>ИТОГО: ${formatPrice(getCartTotal())}</b>
-
-🕐 ${new Date().toLocaleString('ru-RU')}
-            `.trim();
-
-            try {
-                const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: CHAT_ID,
-                        text: message,
-                        parse_mode: 'HTML'
-                    })
-                });
-
-                const data = await response.json();
-
-                if (data.ok) {
-                    showToast('✓ Заказ отправлен! Следите в личном кабинете.');
+                    showToast('✓ Заказ отправлен!');
                     cart = [];
                     updateCartCount();
-                    closeModal();
-                    renderCatalog();
-                } else {
-                    throw new Error(data.description || 'Ошибка Telegram');
+
+                    setTimeout(() => {
+                        tg.close();
+                    }, 800);
+                } catch (err) {
+                    console.error(err);
+                    showToast('⚠️ Ошибка отправки');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Оформить заказ';
                 }
-            } catch (err) {
-                console.error(err);
-                showToast('⚠️ Ошибка отправки. Попробуйте ещё раз.');
+            } else {
+                // Fallback: если сайт открыт в браузере
+                showToast('⚠️ Откройте сайт через бота в Telegram');
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Оформить заказ';
             }
